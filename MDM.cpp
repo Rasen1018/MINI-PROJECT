@@ -30,8 +30,21 @@ void PurchaseManagement::mmInput()
 	int ID, clientID, productID, sellAmount;
 	string sellTime;
 
-	while (flag != 1) { cout << "구매자 ID: "; Primary::integerInput(clientID, flag); }
-	flag = 0; while (flag != 1) { cout << "구매한 제품 ID: "; Primary::integerInput(productID, flag); }
+	while (flag != 1) { 
+		cout << "구매자 ID: "; Primary::integerInput(clientID, flag);
+		if (clientID < 10001) {
+			cout << "(ID:10001부터 시작입니다)" << endl;
+			flag = 0;
+		}
+	}
+	flag = 0; 
+	while (flag != 1) {
+		cout << "구매한 제품 ID: "; Primary::integerInput(productID, flag);
+		if (productID < 30001) {
+			cout << "(ID:30001부터 시작입니다)" << endl;
+			flag = 0;
+		}
+	}
 	flag = 0; while (flag != 1) { cout << "구매 개수: "; Primary::integerInput(sellAmount, flag); }
 	cout << "구매 날짜: "; cin >> sellTime;
 
@@ -47,9 +60,9 @@ void PurchaseManagement::mmOutput(ClientManagement& cm, ProductManagement& pm)
 	cout << "─────────────────────────────────────────────────────────" << endl;
 	for_each(purchaseList_.begin(), purchaseList_.end(), [&](auto mm)
 		{Purchase* m = mm.second;			// 쇼핑 정보 map의 value에 접근 -> value가 Purchase* 형태
-	Client* c = cm.cmChooseID(m->CID());	// 
-	Product* p = pm.pdchooseID(m->PID());
 	if (m != nullptr) {
+		Client* c = cm.cmChooseID(m->CID());	// 
+		Product* p = pm.pdchooseID(m->PID());
 		cout << m->id() << " : " << c->getName() << " : "
 			<< c->getGender() << " : " << c->getAge() << " : "
 			<< p->getName() << " : " << m->getAmount() << " : "
