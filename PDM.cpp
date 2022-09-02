@@ -78,6 +78,7 @@ void ProductManagement::pdSearchCategory() {
 	cout << "式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式" << endl;
 
 
+
 	for (auto i = productList_.begin(); i != productList_.end(); i++) {
 		if (i->second != nullptr)
 			cmp_catg = i->second->category();
