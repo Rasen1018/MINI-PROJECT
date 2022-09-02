@@ -30,6 +30,7 @@ void PurchaseManagement::mmInput()
 	int ID, clientID, productID, sellAmount;
 	string sellTime;
 
+
 	while (flag != 1) { 
 		cout << "±¸¸ÅÀÚ ID: "; Primary::integerInput(clientID, flag);
 		if (clientID < 10001) {
