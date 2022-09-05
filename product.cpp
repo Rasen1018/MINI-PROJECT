@@ -43,14 +43,3 @@ string Product::category()
 void Product::setcatg(string& category) {
 	category_ = category;
 }
-
-void Product::calcInventory(int stock)
-{
-	float result;
-	result = (price_)* stock;
-	if (stock > stock_)
-		cout << "!!재고가 부족합니다!!" << endl;
-	else
-		cout << "총 주문금액 : " << result/10 << "만원" << endl;
-
-}

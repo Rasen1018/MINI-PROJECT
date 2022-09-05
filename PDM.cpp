@@ -1,6 +1,7 @@
 #include "PDM.h"
 #include <sstream>
 #include <fstream>
+#include <Windows.h>
 
 ProductManagement::ProductManagement()
 {
@@ -29,11 +30,13 @@ ProductManagement::~ProductManagement()
 	if (!file.fail()) {
 		for (const auto& v : productList_) {
 			Product* p = v.second;
-			file << p->getID() << ","		//ID 순서대로 제품 정보 저장
-				<< p->getName() << ","
-				<< (p->getPrice())/1000 << ","
-				<< p->getStock() << ","
-				<< p->category() << endl;
+			if (p != nullptr) {
+				file << p->getID() << ","		//ID 순서대로 제품 정보 저장
+					<< p->getName() << ","
+					<< (p->getPrice()) / 1000 << ","
+					<< p->getStock() << ","
+					<< p->category() << endl;
+			}
 		}
 	}
 	cout << "******상품 리스트 저장 완료******" << endl;
@@ -80,6 +83,10 @@ void ProductManagement::pdInput()
 	id=makeID();
 	Product* p = new Product(id, productName, price, stock, category);
 	productList_[makeID()] = p;
+
+	cout << endl << "성공적으로 입력했습니다." << endl << "잠시후 메인메뉴로 돌아갑니다." << endl;
+	Sleep(1000); Sleep(1000);
+	system("cls");
 }
 
 //제품 정보 조회
@@ -101,32 +108,42 @@ void ProductManagement::pdOutput() {
 }
 
 Product* ProductManagement::pdchooseID(int id) {
-	return productList_[id];
+	auto it = productList_.find(id);
+	return (it != productList_.end()) ? productList_[id] : nullptr;
 }
 
 //제품 ID로 검색
 void ProductManagement::pdSearchID(int id) {
 
+	char one;
 	Product* p = productList_[id];
 
 	//ID가 없을 때
-	if (!(productList_[id]))
+	if (productList_.find(id)==productList_.end())
 	{
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 제품입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 제품입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
 	}
 
 	//ID가 있을 때
 	else {
-		cout << "──────────────────────────────" << endl
+		cout << "────────────────────────────────────────────────────────────────────────────" << endl
 			<< id << " 제품 정보" << endl
-			<< "──────────────────────────────" << endl;
+			<< "────────────────────────────────────────────────────────────────────────────" << endl;
 	cout << "제품명: " << p->getName() << " 가격: "
 		<< p->getPrice() << " 재고수량: "
 		<< p->getStock() << " 품목: "
 		<< p->category() << endl;
+
+	cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+	one = _getch();
+	system("cls");
+	cin.ignore();
 	}
 }
 
@@ -134,6 +151,7 @@ void ProductManagement::pdSearchID(int id) {
 void ProductManagement::pdSearchCategory() {
 
 	int found = 0;
+	char one;
 	string catg;
 	string cmp_catg;
 
@@ -152,6 +170,7 @@ void ProductManagement::pdSearchCategory() {
 				<< i->second->getPrice() << " 재고수량: "
 				<< i->second->getStock() << " 품목: "
 				<< i->second->category() << endl;
+			cout << "-----------------------------------------------------------------------------" << endl;
 		}
 		cmp_catg = "";
 	}
@@ -159,9 +178,18 @@ void ProductManagement::pdSearchCategory() {
 	//맞는 품목이 없다면
 	if (found == 0) {
 		cout << endl;
-		cout << "*************************" << endl;
-		cout << "!!찾는 품목이 없습니다!!" << endl;
-		cout << "*************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!찾는 품목이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
+	}
+	else {
+		cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+		one = _getch();
+		system("cls");
+		cin.ignore();
 	}
 }
 
@@ -181,18 +209,23 @@ int ProductManagement::makeID() {
 //해당 ID로 제품 삭제
 void ProductManagement::deleteProduct(int id) {
 
-	if(!(productList_[id])) {
+	if(productList_.find(id)==productList_.end()) {
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 제품입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 제품입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
 	else {
 		productList_.erase(id);
-		cout << endl << "────────────────────────────────" << endl;
-		cout << "!!성공적으로 제거 되었습니다!!" << endl;
-		cout << endl << "────────────────────────────────" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		cout << "\t\t" << "!!성공적으로 제거 되었습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		Sleep(1000); Sleep(1000);
 	}
+	getchar();
 }
 
 //해당 제품 변경
@@ -202,9 +235,11 @@ void ProductManagement::pdRevise(int id) {
 
 	if (!(productList_[id])) {
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 제품입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 제품입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
 
 	else {
@@ -220,30 +255,35 @@ void ProductManagement::pdRevise(int id) {
 		cout << "1: 제품명   |   2: 가격   |   3: 재고 수량   |   4: 품목   |   0: 취소" << endl;
 		Primary::switchInput(num, one); cout << endl;
 
+		//바꾸고 싶은 정보에 따라 switch 문 실행
 		switch (num) {
-		case 1:
+		case 1:		//제품명 변경
 			cout << "제품명 : "; cin.ignore(); getline(cin, name, '\n');
 			p->setName(name);
 			break;
-		case 2:
+		case 2:		//가격 변경
 			cout << "가격 : "; cin >> price;
 			p->setPrice(price);
 			break;
-		case 3:
+		case 3:		//재고수량 변경
 			cout << "재고 수량 : "; cin >> stock;
 			p->setStock(stock);
 			break;
-		case 4:
+		case 4:		//품목 변경
 			cout << "품목 : "; cin >> category;
 			p->setcatg(category);
 			break;
 		default:
+			getchar();
+			system("cls");
 			break;
 		}
 		if (0 < num && num < 5) {
-			cout << endl << "────────────────────────────────" << endl;
-			cout << "!!성공적으로 변경 되었습니다!!" << endl;
-			cout << endl << "────────────────────────────────" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			cout << "\t\t" << "!!성공적으로 변경 되었습니다!!" << endl;
+			cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			Sleep(1000); Sleep(1000); system("cls");
 		}
 	}
 }

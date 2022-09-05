@@ -2,6 +2,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <Windows.h>
 
 ClientManagement::ClientManagement()
 {
@@ -43,12 +44,14 @@ ClientManagement::~ClientManagement()
 	if (!file.fail()) {
 		for (const auto& v : clientList_) {
 			Client* c = v.second;
-			file << c->id() << ','		// 고객 정보 순서대로 저장
+			if(c != nullptr) {
+			file << c->id() << ','			// 고객 정보 순서대로 저장
 				<< c->getName() << ','
 				<< c->getGender() << ','
 				<< c->getAge() << ','
 				<< c->getPhoneNumber() << ','
 				<< c->getAdress() << endl;
+			}
 		}
 	}
 	cout << "******고객 리스트 저장 완료******" << endl;
@@ -119,6 +122,9 @@ void ClientManagement::cmInput()
 	clientList_[makeID()] = c; //map에 key -> makeID() , value -> c 대입
 							   //clientList_.insert({makeID(), c});
 	
+	cout << endl << "성공적으로 입력했습니다." << endl << "잠시후 메인메뉴로 돌아갑니다." << endl;
+	Sleep(1000); Sleep(1000);
+	system("cls");
 	/*Client* client1 = new Client("TaeHun", 'M', 30, "010-5557-9957", "AnSan");
 	clientList_[1] = client1;*/
 }
@@ -145,35 +151,46 @@ void ClientManagement::cmOutput()
 
 Client* ClientManagement::cmChooseID(int id) //id값 반환
 {
-	return clientList_[id];
+	auto it = clientList_.find(id);
+	return (it != clientList_.end())? clientList_[id] : nullptr;
 }
 
 void ClientManagement::cmSearchID(int id) //ID로 검색
 {
+	char one;
 	Client* c = clientList_[id];				//검색할 ID 입력
 
-	if (!(clientList_[id]))						//ID가 없으면 출력
+	if (clientList_.find(id)==clientList_.end())						//ID가 없으면 출력
 	{
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 고객입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 고객입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
 	}
 
 	else {
-		cout << "──────────────────────────────" << endl
+		cout << "────────────────────────────────────────────────────────────────────────────" << endl
 			<< id << " 고객 정보" << endl
-			<< "──────────────────────────────" << endl;
+			<< "────────────────────────────────────────────────────────────────────────────" << endl;
 		cout << "이름: " << c->getName() << " 나이: "			//검색한 ID 정보 출력
 			<< c->getAge() << " 전화번호: "
 			<< c->getPhoneNumber() << " 주소: "
 			<< c->getAdress() << endl;
+
+		cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+		one = _getch();
+		system("cls");
+		cin.ignore();
 	}
 }
 
 void ClientManagement::cmSearchName() //이름으로 검색
 {
 	int found=0;		//나중에 이름이 존재하는지 확인하기 위해 사용
+	char one;
 	string name;		//검색할 이름
 	string cmp_name;	//객체에서 확인할 이름
 
@@ -193,31 +210,45 @@ void ClientManagement::cmSearchName() //이름으로 검색
 			cout << "-----------------------------------------------------------------------------" << endl;
 		}
 		cmp_name = ""; //string 초기화
-	}
+	} 
 
 	if (found == 0) {
 		cout << endl;
-		cout << "*************************" << endl;
-		cout << "!!찾는 이름이 없습니다!!" << endl;
-		cout << "*************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!찾는 이름이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
+	}
+	else {
+		cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+		one = _getch();
+		system("cls");
+		cin.ignore();
 	}
 }
 
 //정보 삭제
 void ClientManagement::deleteClient(int id) {
 
-	if(!(clientList_[id])) {			// 찾는 아이디가 없으면 출력
+	if(clientList_.find(id)==clientList_.end()) {			// 찾는 아이디가 없으면 출력
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 고객입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 고객입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
 	else {
 		clientList_.erase(id);			// erease로 key 삭제
-		cout << endl << "────────────────────────────────" << endl;
-		cout << "!!성공적으로 제거 되었습니다!!" << endl;
-		cout << endl << "────────────────────────────────" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		cout << "\t\t" << "!!성공적으로 제거 되었습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		Sleep(1000); Sleep(1000);
 	}
+	getchar();
 }
 
 //정보 변경
@@ -227,9 +258,11 @@ void ClientManagement::cmRevise(int id) {
 
 	if (!(clientList_[id])) {			// 찾는 아이디가 없으면 출력
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 고객입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!존재하지 않는 고객입니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
 
 	else {
@@ -264,12 +297,16 @@ void ClientManagement::cmRevise(int id) {
 			c->setAdress(adress);
 			break;
 		default:
+			getchar();
+			system("cls");
 			break;
 		}
 		if (0 < num && num < 5) {
-			cout << endl << "────────────────────────────────" << endl;
-			cout << "!!성공적으로 변경 되었습니다!!" << endl;
-			cout << endl << "────────────────────────────────" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			cout << "\t\t" << "!!성공적으로 변경 되었습니다!!" << endl;
+			cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			Sleep(1000); Sleep(1000); system("cls");
 		}
 	}
 }

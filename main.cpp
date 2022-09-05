@@ -70,6 +70,7 @@ void title(char& one, int& num)
 	cout << endl;
 	cout << endl;
 	cout << endl;
+	system("cls");
 }
 
 void clientInterface(ClientManagement& cm) // 고객 정보 인터페이스
@@ -91,14 +92,16 @@ void clientInterface(ClientManagement& cm) // 고객 정보 인터페이스
 
 		if (num == 1) {
 			cout << "변경하려는 고객 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			system("cls");
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			cm.cmRevise(id);  // 변경
 		}
 		else if (num == 2) {
 			cout << "삭제하려는 고객 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			cm.deleteClient(id);  // 삭제
 		}
+		system("cls");
 		break;
 	}
 	case 3:
@@ -130,14 +133,16 @@ void productInterface(ProductManagement& pm)	// 제품 정보 인터페이스
 
 		if (num == 1) {
 			cout << "변경하려는 제품 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			system("cls");
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			pm.pdRevise(id);	// 변경
 		}
 		else if (num == 2) {
 			cout << "삭제하려는 제품 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			pm.deleteProduct(id);	// 제거
 		}
+		system("cls");
 		break;
 	}
 	case 3:
@@ -170,14 +175,16 @@ void purchaseInterface(PurchaseManagement& mm, ClientManagement& cm, ProductMana
 
 		if (num == 1) {
 			cout << "변경하려는 구매 명단 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			system("cls");
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			mm.mmRevise(id);	// 변경
 		}
 		else if (num == 2) {
 			cout << "삭제하려는 구매 명단의 ID를 입력하세요. "; cin >> id;
-			cout << "─────────────────────────────────────────────────────────" << endl;
+			cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 			mm.deleteReceipt(id);	// 제거
 		}
+		system("cls");
 		break;
 	}
 	case 3:

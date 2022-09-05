@@ -16,7 +16,6 @@ public:
 	void setPrice(int);
 	void setStock(int);
 	void setcatg(string&);
-	void calcInventory(int stock);
 
 private:
 	int productID_;

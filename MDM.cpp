@@ -3,6 +3,7 @@
 #include "purchase.h"
 #include <fstream>
 #include <sstream>
+#include <Windows.h>
 
 PurchaseManagement::PurchaseManagement(ClientManagement& cm, ProductManagement& pm) : cm_(cm), pm_(pm)
 //고객 정보 리스트와 제품 정보 리스트를 가져와서 안에 있는 정보를 모두 레퍼런스로 받아서 사용
@@ -33,9 +34,11 @@ PurchaseManagement::~PurchaseManagement()
 	if (!file.fail()) {
 		for (const auto& v : purchaseList_) {
 			Purchase* m = v.second;
-			file << m->id() << ',' << m->CID() << ","
-				<< m->PID() << ',' << m->getAmount() << ','
-				<< m->getTime() << endl;
+			if (m != nullptr) {
+				file << m->id() << ',' << m->CID() << ","
+					<< m->PID() << ',' << m->getAmount() << ','
+					<< m->getTime() << endl;
+			}
 		}
 	}
 	cout << "******쇼핑 리스트 저장 완료******" << endl;
@@ -82,7 +85,8 @@ int PurchaseManagement::makeID()
 
 // 특정 ID에 대한 쇼핑 리스트 가져오기
 Purchase* PurchaseManagement::mmChooseID(int id) {
-	return purchaseList_[id];
+	auto it = purchaseList_.find(id);
+	return (it != purchaseList_.end()) ? purchaseList_[id] : nullptr;
 }
 
 // 쇼핑 정보 입력
@@ -130,6 +134,10 @@ void PurchaseManagement::mmInput()
 	Purchase* m = new Purchase(ID, clientID, productID, sellAmount, sellTime);
 	purchaseList_[makeID()] = m;
 
+	cout << endl << "성공적으로 입력했습니다." << endl << "잠시후 메인메뉴로 돌아갑니다." << endl;
+	Sleep(1000); Sleep(1000);
+	system("cls");
+
 }
 
 // 쇼핑 정보 조회
@@ -156,6 +164,7 @@ void PurchaseManagement::mmOutput(ClientManagement& cm, ProductManagement& pm)
 void PurchaseManagement::mmSearchCID()
 {
 	int found = 0;
+	char one;
 	string name;
 	string cmp_name;
 	cout << "고객 이름을 입력하세요: "; cin >> name;
@@ -183,17 +192,27 @@ void PurchaseManagement::mmSearchCID()
 
 	if (found == 0) {
 		cout << endl;
-		cout << "*************************" << endl;
-		cout << "!!주문 내역이 없습니다!!" << endl;
-		cout << "*************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!구매 내역이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
+	}
+	else {
+		cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+		one = _getch();
+		system("cls");
+		cin.ignore();
 	}
 }
 void PurchaseManagement::mmSearchPID()
 {
+	char one;
 	int found = 0;
-	string name;
-	string cmp_name;
-	cout << "제품 이름을 입력하세요: "; cin >> name;
+	string category;
+	string cmp_catg;
+	cout << "제품 이름을 입력하세요: "; cin >> category;
 	cout << "────────────────────────────────────────────────────────────────────────────" << endl;
 
 	for (auto i = purchaseList_.begin(); i != purchaseList_.end(); i++) {
@@ -201,56 +220,73 @@ void PurchaseManagement::mmSearchPID()
 			Client* c = cm_.cmChooseID(i->second->CID());
 			Product* p = pm_.pdchooseID(i->second->PID());
 			Purchase* m = i->second;
-			cmp_name = p->getName();
+			cmp_catg = p->category();
 
-			if (name == cmp_name) {
+			if (category == cmp_catg) {
 				found = 1;
 				cout << "[" << m->id() << "] 고객이름: " << c->getName() 
 					<< " 성별: " << c->getGender() << " 나이: " << c->getAge() 
 					<< endl << "        " << " 제품명: " << p->getName()
-					<< " 주문수량: " << m->getAmount() << " 주문일자: " << m->getTime() 
+					<< " 주문수량: " << m->getAmount() << " 주문일자(YY-MM-DD): " << m->getTime() 
 					<< " 주문금액: " << (m->getAmount()) * (p->getPrice()) << endl;
 				cout << "-----------------------------------------------------------------------------" << endl;
 			}
 		}
-		cmp_name = "";
+		cmp_catg = "";
 	}
 
 	if (found == 0) {
 		cout << endl;
-		cout << "*************************" << endl;
-		cout << "!!주문 내역이 없습니다!!" << endl;
-		cout << "*************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!찾는 품목이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
+		system("cls");
+	}
+	else {
+		cout << endl << endl << "\t" << "아무키나 입력하면 메인화면으로 돌아갑니다." << endl;
+		one = _getch();
+		system("cls");
+		cin.ignore();
 	}
 }
 void PurchaseManagement::deleteReceipt(int id)
 {
-	if (!(purchaseList_[id])) {
+	if (purchaseList_.find(id)==purchaseList_.end()) {
 		cout << endl;
-		cout << "**************************" << endl;
-		cout << "!!주문 내역이 없습니다!!" << endl;
-		cout << "**************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!주문 내역이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
 	else {
 		purchaseList_.erase(id);
-		cout << endl << "────────────────────────────────" << endl;
-		cout << "!!성공적으로 제거 되었습니다!!" << endl;
-		cout << endl << "────────────────────────────────" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		cout << "\t\t" << "!!성공적으로 제거 되었습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+		Sleep(1000); Sleep(1000);
 	}
+	getchar();
 }
+
 void PurchaseManagement::mmRevise(int id) // 다바꿔도 됨
 {
-	Purchase* m = purchaseList_[id];
-
-
-	if (!(purchaseList_[id])) {         // 찾는 아이디가 없으면 출력
+	map<int, Purchase*> ::iterator it;
+	it = purchaseList_.find(id);
+	// 찾는 ID가 없으면 출력
+	if (it == purchaseList_.end()) {
 		cout << endl;
-		cout << "****************************" << endl;
-		cout << "!!존재하지 않는 고객입니다!!" << endl;
-		cout << "****************************" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		cout << "\t\t" << "!!주문 내역이 없습니다!!" << endl;
+		cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+		cout << endl << "\t\t" << "************************************" << endl;
+		Sleep(1000); Sleep(1000);
 	}
-
 	else {
+		Purchase* m = purchaseList_[id];
 		Client* c = cm_.cmChooseID(m->CID());
 		Product* p = pm_.pdchooseID(m->PID());
 		cout << "[" << m->id() << "] 고객이름: " << c->getName()
@@ -284,11 +320,17 @@ void PurchaseManagement::mmRevise(int id) // 다바꿔도 됨
 			cout << "주문날짜 : "; cin >> sellTime;
 			m->setTime(sellTime);
 			break;
+		default:
+			getchar();
+			system("cls");
+			break;
 		}
 		if (0 < num && num < 5) {
-			cout << endl << "────────────────────────────────" << endl;
-			cout << "  !!성공적으로 변경 되었습니다!!  " << endl;
-			cout << endl << "────────────────────────────────" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			cout << "\t\t" << "!!성공적으로 변경 되었습니다!!" << endl;
+			cout << "\t\t" << "!!잠시후에 메인 메뉴로 돌아갑니다!!" << endl;
+			cout << endl << "\t\t" << "────────────────────────────────────" << endl;
+			Sleep(1000); Sleep(1000); system("cls");
 		}
 	}
 }
