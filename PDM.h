@@ -6,6 +6,7 @@
 class ProductManagement{
 public:
 	ProductManagement();
+	~ProductManagement();
 	void pdInput();
 	void pdOutput();
 	Product* pdchooseID(int);
@@ -14,6 +15,9 @@ public:
 	int makeID();
 	void deleteProduct(int);
 	void pdRevise(int);
+	void showList();
+
+	vector<string> parseCSV(istream&, char);
 
 private:
 	map<int, Product*> productList_;
